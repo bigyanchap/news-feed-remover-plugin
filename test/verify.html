@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>News Feed Remover — CSS checks</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 24px;
+      }
+      .case {
+        margin-bottom: 16px;
+      }
+    </style>
+    <style id="nfr-test-css"></style>
+  </head>
+  <body>
+    <h1>Feed hiding checks</h1>
+    <pre id="results">running…</pre>
+
+    <section id="youtube-home">
+      <ytd-browse page-subtype="home">
+        <ytd-rich-grid-renderer id="yt-grid">Recommended videos</ytd-rich-grid-renderer>
+      </ytd-browse>
+      <div id="yt-search">Search results stay</div>
+    </section>
+
+    <section id="twitter-home">
+      <div data-testid="primaryColumn">
+        <div data-testid="tweetTextarea_0">Compose</div>
+        <div data-testid="cellInnerDiv" id="tweet-cell">Home tweet</div>
+      </div>
+    </section>
+
+    <section id="facebook-home">
+      <div role="feed" id="fb-feed">News feed posts</div>
+      <div id="fb-chat">Messenger stays</div>
+    </section>
+
+    <section id="instagram-home">
+      <main>
+        <article id="ig-post">Home post</article>
+      </main>
+    </section>
+
+    <section id="linkedin-home">
+      <main>
+        <div class="feed-shared-update-v2" id="li-update">Feed update</div>
+        <aside class="news-module" id="li-news">LinkedIn News</aside>
+      </main>
+    </section>
+
+    <script src="../content/sites.js"></script>
+    <script>
+      function wrapCss(css) {
+        return css
+          .trim()
+          .split("}")
+          .map((block) => block.trim())
+          .filter(Boolean)
+          .map((block) => {
+            const [selectors, ...rest] = block.split("{");
+            const rules = rest.join("{").trim();
+            const prefixed = selectors
+              .split(",")
+              .map((sel) => sel.trim())
+              .filter(Boolean)
+              .flatMap((sel) => [`html.nfr-pending ${sel}`, `html.nfr-active ${sel}`])
+              .join(",\n");
+            return `${prefixed} {\n        ${rules}\n      }`;
+          })
+          .join("\n\n");
+      }
+
+      document.getElementById("nfr-test-css").textContent = Object.values(NFR_SITES)
+        .map((site) => wrapCss(site.css))
+        .join("\n");
+
+      function isHidden(id) {
+        const el = document.getElementById(id);
+        return getComputedStyle(el).display === "none";
+      }
+
+      const lines = [];
+      function check(name, cond) {
+        lines.push(`${cond ? "PASS" : "FAIL"}  ${name}`);
+      }
+
+      document.documentElement.classList.remove("nfr-active");
+      check("youtube visible when off", !isHidden("yt-grid"));
+      check("twitter visible when off", !isHidden("tweet-cell"));
+      check("facebook visible when off", !isHidden("fb-feed"));
+      check("instagram visible when off", !isHidden("ig-post"));
+      check("linkedin visible when off", !isHidden("li-update"));
+
+      document.documentElement.classList.add("nfr-active");
+      check("youtube home grid hidden", isHidden("yt-grid"));
+      check("youtube non-feed still visible", !isHidden("yt-search"));
+      check("twitter home tweets hidden", isHidden("tweet-cell"));
+      check("facebook feed hidden", isHidden("fb-feed"));
+      check("facebook messenger still visible", !isHidden("fb-chat"));
+      check("instagram posts hidden", isHidden("ig-post"));
+      check("linkedin updates hidden", isHidden("li-update"));
+      check("linkedin news hidden", isHidden("li-news"));
+
+      const failed = lines.filter((line) => line.startsWith("FAIL")).length;
+      lines.push("");
+      lines.push(failed === 0 ? "ALL CHECKS PASSED" : `${failed} CHECK(S) FAILED`);
+      document.getElementById("results").textContent = lines.join("\n");
+      document.title = failed === 0 ? "NFR PASS" : "NFR FAIL";
+    </script>
+  </body>
+</html>

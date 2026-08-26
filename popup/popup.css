@@ -1,0 +1,220 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --line: rgba(17, 24, 39, 0.08);
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --track: #d1d5db;
+  --on: #2563eb;
+  --youtube: #ff0000;
+  --facebook: #1877f2;
+  --instagram: #e1306c;
+  --linkedin: #0a66c2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f141c;
+    --card: #171e28;
+    --text: #f3f4f6;
+    --muted: #9ca3af;
+    --line: rgba(255, 255, 255, 0.08);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    --track: #374151;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 360px;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.logo {
+  border-radius: 10px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.header p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sites {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.site {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.site + .site {
+  border-top: 1px solid var(--line);
+}
+
+.site-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.site-meta strong,
+.site-meta span {
+  display: block;
+}
+
+.site-meta strong {
+  font-size: 13px;
+}
+
+.site-meta span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.badge.youtube {
+  background: var(--youtube);
+}
+
+.badge.twitter {
+  background: #000;
+  color: #fff;
+}
+
+.badge.facebook {
+  background: var(--facebook);
+}
+
+.badge.instagram {
+  background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+}
+
+.badge.linkedin {
+  background: var(--linkedin);
+}
+
+.switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.track {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--track);
+  transition: background 0.18s ease;
+}
+
+.track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease;
+}
+
+.switch input:checked + .track {
+  background: var(--on);
+}
+
+.switch input:checked + .track::after {
+  transform: translateX(18px);
+}
+
+.switch input:focus-visible + .track {
+  outline: 2px solid var(--on);
+  outline-offset: 3px;
+}
+
+.footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+button {
+  flex: 1;
+  height: 34px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--on);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.ghost {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+button:hover {
+  filter: brightness(1.05);
+}

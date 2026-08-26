@@ -1,0 +1,6 @@
+.DS_Store
+*.crx
+*.pem
+test/edge-profile/
+test/edge-profile-margin/
+test/screenshots/

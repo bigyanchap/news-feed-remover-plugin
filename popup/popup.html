@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>News Feed Remover</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="header">
+      <img class="logo" src="../icons/icon48.png" alt="" width="36" height="36" />
+      <div>
+        <h1>News Feed Remover</h1>
+        <p>Hide feeds on the sites you choose</p>
+      </div>
+    </header>
+
+    <ul class="sites" role="list">
+      <li class="site">
+        <div class="site-meta">
+          <span class="badge youtube" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M8 6.8v10.4L18.2 12 8 6.8z" />
+            </svg>
+          </span>
+          <div>
+            <strong>YouTube</strong>
+            <span>Recommendations &amp; homepage</span>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" data-site="youtube" role="switch" aria-label="Hide YouTube recommendations" checked />
+          <span class="track"></span>
+        </label>
+      </li>
+
+      <li class="site">
+        <div class="site-meta">
+          <span class="badge twitter" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14">
+              <path
+                fill="currentColor"
+                d="M13.7 10.5 20.4 3h-1.6l-5.8 6.5L8.4 3H3.5l7 9.9L3.5 21h1.6l6.1-6.9 4.9 6.9h4.9l-7.3-10.5Zm-2.2 2.4-.7-1-5.7-8h2.5l4.6 6.4.7 1 6 8.4h-2.5l-4.9-6.8Z"
+              />
+            </svg>
+          </span>
+          <div>
+            <strong>X (Twitter)</strong>
+            <span>Home timeline &amp; trending</span>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" data-site="twitter" role="switch" aria-label="Hide X Twitter home timeline" checked />
+          <span class="track"></span>
+        </label>
+      </li>
+
+      <li class="site">
+        <div class="site-meta">
+          <span class="badge facebook" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <path
+                fill="currentColor"
+                d="M14.2 21v-7.2h2.4l.4-2.8h-2.8V9.2c0-.8.2-1.4 1.4-1.4h1.5V5.3c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2h-2.5v2.8h2.5V21h3Z"
+              />
+            </svg>
+          </span>
+          <div>
+            <strong>Facebook</strong>
+            <span>Homepage news feed</span>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" data-site="facebook" role="switch" aria-label="Hide Facebook news feed" checked />
+          <span class="track"></span>
+        </label>
+      </li>
+
+      <li class="site">
+        <div class="site-meta">
+          <span class="badge instagram" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <rect x="4.5" y="4.5" width="15" height="15" rx="4" fill="none" stroke="currentColor" stroke-width="1.8" />
+              <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8" />
+              <circle cx="16.6" cy="7.4" r="1" fill="currentColor" />
+            </svg>
+          </span>
+          <div>
+            <strong>Instagram</strong>
+            <span>Home posts feed</span>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" data-site="instagram" role="switch" aria-label="Hide Instagram home feed" checked />
+          <span class="track"></span>
+        </label>
+      </li>
+
+      <li class="site">
+        <div class="site-meta">
+          <span class="badge linkedin" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <path
+                fill="currentColor"
+                d="M7.4 9.3H4.8V19h2.6V9.3ZM6.1 5c-.8 0-1.5.7-1.5 1.5S5.3 8 6.1 8s1.5-.7 1.5-1.5S6.9 5 6.1 5Zm13.1 8.2c0-2.4-1.3-3.9-3.3-3.9-1.5 0-2.2.8-2.6 1.4V9.3h-2.6c0 .6 0 9.7 0 9.7h2.6v-5.4c.1-.3.3-1 1.1-1 1 0 1.4.8 1.4 2V19h2.6v-5.8Z"
+              />
+            </svg>
+          </span>
+          <div>
+            <strong>LinkedIn</strong>
+            <span>Main feed &amp; news module</span>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" data-site="linkedin" role="switch" aria-label="Hide LinkedIn feed" checked />
+          <span class="track"></span>
+        </label>
+      </li>
+    </ul>
+
+    <footer class="footer">
+      <button type="button" id="enable-all">Enable all</button>
+      <button type="button" id="disable-all" class="ghost">Disable all</button>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
