@@ -90,6 +90,52 @@
         opacity: 0.72;
         margin: 0;
       }
+
+      #${PLACEHOLDER_WRAP_ID}.nfr-wall {
+        padding: 16px 12px 4px !important;
+      }
+
+      .nfr-block {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 680px;
+        min-height: 320px;
+        margin: 0 auto 16px !important;
+        padding: 32px 28px !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: inherit;
+        border: 1px dashed color-mix(in srgb, currentColor 28%, transparent);
+        border-radius: 16px;
+        background: color-mix(in srgb, currentColor 4%, transparent);
+      }
+
+      .nfr-block .nfr-kicker {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.6;
+        font-weight: 600;
+      }
+
+      .nfr-block .nfr-title {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin: 0;
+      }
+
+      .nfr-block .nfr-body {
+        font-size: 16px;
+        line-height: 1.5;
+        opacity: 0.72;
+        margin: 0;
+      }
     `;
   }
 
@@ -140,15 +186,33 @@
       wrap.id = PLACEHOLDER_WRAP_ID;
       wrap.setAttribute("data-nfr", "placeholder-wrap");
 
-      const node = document.createElement("div");
-      node.id = PLACEHOLDER_ID;
-      node.setAttribute("data-nfr", "placeholder");
-      node.innerHTML = `
-        <div class="nfr-kicker">News Feed Remover</div>
-        <p class="nfr-title">${site.title}</p>
-        <p class="nfr-body">${site.body}</p>
-      `;
-      wrap.appendChild(node);
+      if (Array.isArray(site.placeholderBlocks) && site.placeholderBlocks.length) {
+        // Wall mode (Facebook): a stack of big reminder blocks in front of
+        // the feed instead of one small placeholder card. The feed itself
+        // stays in the page, below the wall.
+        wrap.classList.add("nfr-wall");
+        for (const block of site.placeholderBlocks) {
+          const node = document.createElement("div");
+          node.className = "nfr-block";
+          node.setAttribute("data-nfr", "goal-block");
+          node.innerHTML = `
+            <div class="nfr-kicker">${block.kicker}</div>
+            <p class="nfr-title">${block.title}</p>
+            <p class="nfr-body">${block.body}</p>
+          `;
+          wrap.appendChild(node);
+        }
+      } else {
+        const node = document.createElement("div");
+        node.id = PLACEHOLDER_ID;
+        node.setAttribute("data-nfr", "placeholder");
+        node.innerHTML = `
+          <div class="nfr-kicker">News Feed Remover</div>
+          <p class="nfr-title">${site.title}</p>
+          <p class="nfr-body">${site.body}</p>
+        `;
+        wrap.appendChild(node);
+      }
     }
 
     if (wrap.parentElement !== parent) {
@@ -160,9 +224,36 @@
     document.getElementById(PLACEHOLDER_WRAP_ID)?.remove();
   }
 
+  let siteEnabled = false;
+
   async function refresh() {
     const settings = await getSettings();
+    siteEnabled = Boolean(settings[siteId]);
     setHiding(shouldHide(settings));
+  }
+
+  // YouTube ads are never blocked, hidden, or fast-forwarded. The ad is
+  // left to play its part, and the moment YouTube itself offers the Skip
+  // button, it is clicked automatically.
+  const SKIP_BUTTON_SELECTORS = [
+    ".ytp-skip-ad-button",
+    ".ytp-ad-skip-button-modern",
+    ".ytp-ad-skip-button",
+    "button.ytp-skip-ad-button",
+    ".ytp-skip-ad button",
+    "button[id^='skip-button']",
+  ];
+
+  function trySkipYouTubeAd() {
+    if (siteId !== "youtube" || !siteEnabled) return;
+    for (const selector of SKIP_BUTTON_SELECTORS) {
+      for (const button of document.querySelectorAll(selector)) {
+        if (button.getClientRects().length) {
+          button.click();
+          return;
+        }
+      }
+    }
   }
 
   injectStyles();
@@ -231,4 +322,8 @@
   }
 
   setInterval(onUrlMaybeChanged, 800);
+
+  if (siteId === "youtube") {
+    setInterval(trySkipYouTubeAd, 500);
+  }
 })();

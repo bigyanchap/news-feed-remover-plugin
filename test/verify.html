@@ -32,6 +32,12 @@
       </div>
     </section>
 
+    <section id="youtube-watch">
+      <div id="secondary">
+        <div id="related">Watch-page sidebar suggestions</div>
+      </div>
+    </section>
+
     <section id="facebook-home">
       <div role="feed" id="fb-feed">News feed posts</div>
       <div id="fb-chat">Messenger stays</div>
@@ -97,7 +103,11 @@
       check("youtube home grid hidden", isHidden("yt-grid"));
       check("youtube non-feed still visible", !isHidden("yt-search"));
       check("twitter home tweets hidden", isHidden("tweet-cell"));
-      check("facebook feed hidden", isHidden("fb-feed"));
+      check("youtube watch sidebar still visible", !isHidden("related"));
+      check("youtube css has no sidebar removal", !/#related|watch-next-secondary/.test(NFR_SITES.youtube.css));
+      check("facebook feed still visible (goal blocks instead)", !isHidden("fb-feed"));
+      check("facebook hides nothing in css", NFR_SITES.facebook.css.trim() === "");
+      check("facebook has 7 goal blocks", (NFR_SITES.facebook.placeholderBlocks || []).length === 7);
       check("facebook messenger still visible", !isHidden("fb-chat"));
       check("instagram posts hidden", isHidden("ig-post"));
       check("linkedin updates hidden", isHidden("li-update"));

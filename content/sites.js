@@ -9,6 +9,11 @@ const NFR_DEFAULTS = {
 const NFR_SITES = {
   youtube: {
     hostIncludes: ["youtube.com"],
+    // Only the home/trending recommendation feed is hidden. The watch-page
+    // sidebar ("Up next" / related videos) is deliberately NOT removed: once
+    // a video has been opened on purpose, its sidebar stays as YouTube made
+    // it. Ads are not blocked or hidden either — content.js lets the ad play
+    // and clicks YouTube's own Skip button the moment it appears.
     css: `
       ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
       ytd-browse[page-subtype="home"] #contents.ytd-rich-grid-renderer,
@@ -19,14 +24,6 @@ const NFR_SITES = {
       ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer,
       ytd-browse[page-subtype="trending"] ytd-two-column-browse-results-renderer,
       ytd-browse[page-subtype="trending"] #contents {
-        display: none !important;
-      }
-
-      #related,
-      #secondary ytd-watch-next-secondary-results-renderer,
-      ytd-watch-flexy #secondary #related,
-      #below ytd-watch-next-secondary-results-renderer,
-      ytd-watch-next-secondary-results-renderer {
         display: none !important;
       }
 
@@ -61,12 +58,7 @@ const NFR_SITES = {
           document.querySelector("ytd-page-manager")
         );
       }
-      if (path.startsWith("/watch")) {
-        return (
-          document.querySelector("#secondary") ||
-          document.querySelector("#below")
-        );
-      }
+      // No placeholder on watch pages: the sidebar there is left untouched.
       return null;
     },
     title: "Recommendations hidden",
@@ -101,14 +93,48 @@ const NFR_SITES = {
 
   facebook: {
     hostIncludes: ["facebook.com"],
-    css: `
-      div[role="feed"],
-      div[role="main"] div[data-pagelet="Feed"],
-      div[data-pagelet="MainFeed"],
-      div[data-pagelet^="FeedUnit"] {
-        display: none !important;
-      }
-    `,
+    // The news feed is NOT removed on Facebook anymore. Instead, content.js
+    // puts the seven goal-reminder blocks below in front of the feed (each
+    // at least 300px tall, styled in content.js), so the feed only appears
+    // after scrolling consciously past every one of them.
+    css: ``,
+    placeholderBlocks: [
+      {
+        kicker: "Reminder 1 of 7 — Stop",
+        title: "Remember your life's goal",
+        body: "You are a seeker of ultimate truth. Nothing in this feed is worth more than that.",
+      },
+      {
+        kicker: "Reminder 2 of 7 — Ask",
+        title: "Why did you open Facebook?",
+        body: "Name the one real reason. If there is no reason, close the tab — that is the answer.",
+      },
+      {
+        kicker: "Reminder 3 of 7 — Your sadhana",
+        title: "Practice before scrolling",
+        body: "Yoga, Puja and Sandhya are what actually change you. The feed changes nothing.",
+      },
+      {
+        kicker: "Reminder 4 of 7 — Your work",
+        title: "Awaken Me is waiting",
+        body: "You are building an app that helps people wake up consciously. What is today's one step for it?",
+      },
+      {
+        kicker: "Reminder 5 of 7 — Your body",
+        title: "Vitality is earned daily",
+        body: "A clear body, strong digestion and full-day energy — scrolling builds none of that.",
+      },
+      {
+        kicker: "Reminder 6 of 7 — Be conscious",
+        title: "One thing, then leave",
+        body: "If you came for a message, a group or a profile, do only that one thing. No drifting.",
+      },
+      {
+        kicker: "Reminder 7 of 7 — Your choice",
+        title: "The feed begins below this block",
+        body: "You have read all seven reminders. If you still scroll, scroll consciously — you decided, the feed did not.",
+      },
+    ],
     isTargetPage() {
       const path = location.pathname.replace(/\/$/, "") || "/";
       if (path === "/" || path === "/home.php" || path === "/home") return true;
@@ -124,8 +150,8 @@ const NFR_SITES = {
         document.querySelector("div[role='banner']")?.parentElement
       );
     },
-    title: "News feed hidden",
-    body: "You can still use Messenger, Groups, Marketplace, and profiles.",
+    title: "Remember why you are here",
+    body: "Seven reminders stand between you and the feed.",
   },
 
   instagram: {
