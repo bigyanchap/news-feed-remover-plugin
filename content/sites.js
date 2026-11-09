@@ -160,6 +160,22 @@ const NFR_SITES = {
         document.querySelector("[data-pagelet='MainFeed']")
       );
     },
+    // A landmark that lives inside the centre column (a post unit, the
+    // feed, or Stories). content.js walks up from it to find the column
+    // itself: on Facebook, role="main" is the full-width ROW holding the
+    // left rail, the centre column and the right rail, so inserting the
+    // wall into it directly squeezes the wall into the left-rail slot —
+    // which is exactly where the first version put it (page shifted
+    // sideways, blocks stacked in the left strip).
+    placeholderSeed() {
+      return (
+        document.querySelector("div[role='feed']") ||
+        document.querySelector("[data-pagelet^='FeedUnit']") ||
+        document.querySelector("[data-pagelet='Feed']") ||
+        document.querySelector("[data-pagelet='MainFeed']") ||
+        document.querySelector("[data-pagelet='Stories']")
+      );
+    },
     title: "Remember why you are here",
     body: "Seven reminders stand between you and the feed.",
   },

@@ -110,17 +110,25 @@
         gap: 10px;
         text-align: center;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        color: inherit;
-        border: 1px dashed color-mix(in srgb, currentColor 28%, transparent);
+        color: #1c1e21;
+        border: 2px dashed rgba(120, 135, 160, 0.65);
         border-radius: 16px;
-        background: color-mix(in srgb, currentColor 4%, transparent);
+        background: rgba(120, 135, 160, 0.14);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .nfr-block {
+          color: #f0f2f5;
+          border-color: rgba(160, 178, 205, 0.7);
+          background: rgba(160, 178, 205, 0.16);
+        }
       }
 
       .nfr-block .nfr-kicker {
         font-size: 12px;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        opacity: 0.6;
+        opacity: 0.75;
         font-weight: 600;
       }
 
@@ -134,7 +142,7 @@
       .nfr-block .nfr-body {
         font-size: 16px;
         line-height: 1.5;
-        opacity: 0.72;
+        opacity: 0.85;
         margin: 0;
       }
     `;
@@ -216,15 +224,45 @@
       }
     }
 
-    const anchor =
-      typeof site.placeholderAnchor === "function" ? site.placeholderAnchor() : null;
-    if (anchor && anchor.parentElement) {
-      if (wrap.parentElement !== anchor.parentElement || wrap.nextSibling !== anchor) {
-        anchor.parentElement.insertBefore(wrap, anchor);
+    let placed = false;
+    if (typeof site.placeholderSeed === "function") {
+      const column = findColumnFor(site.placeholderSeed());
+      if (column) {
+        if (wrap.parentElement !== column || column.firstElementChild !== wrap) {
+          column.prepend(wrap);
+        }
+        placed = true;
       }
-    } else if (wrap.parentElement !== parent) {
-      parent.prepend(wrap);
     }
+
+    if (!placed) {
+      const anchor =
+        typeof site.placeholderAnchor === "function" ? site.placeholderAnchor() : null;
+      if (anchor && anchor.parentElement) {
+        if (wrap.parentElement !== anchor.parentElement || wrap.nextSibling !== anchor) {
+          anchor.parentElement.insertBefore(wrap, anchor);
+        }
+      } else if (wrap.parentElement !== parent) {
+        parent.prepend(wrap);
+      }
+    }
+  }
+
+  // Walk up from a landmark inside a site's centre column until reaching
+  // the element that IS the column: a few hundred pixels wide, with a
+  // much wider parent (the page row). Returns null while the page layout
+  // has not settled yet — the self-heal check retries every second.
+  function findColumnFor(seed) {
+    let node = seed;
+    while (node && node.parentElement) {
+      const width = node.getBoundingClientRect().width;
+      const parentWidth = node.parentElement.getBoundingClientRect().width;
+      if (width >= 380 && width <= 920 && parentWidth > width + 200) {
+        return node;
+      }
+      node = node.parentElement;
+    }
+    return null;
   }
 
   function removePlaceholder() {
