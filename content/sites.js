@@ -93,18 +93,24 @@ const NFR_SITES = {
 
   facebook: {
     hostIncludes: ["facebook.com"],
-    // Facebook shows the seven goal-reminder blocks below (rendered by
-    // content.js at the top of the centre column, each at least 300px
-    // tall), and the news feed underneath them is suppressed entirely:
-    // the feed container and every feed unit are hidden, including units
-    // Facebook lazy-loads later, so scrolling past the blocks meets no
-    // feed at all.
+    // Facebook shows ONLY the seven goal-reminder blocks below: content.js
+    // renders them as a full-width overlay under the header (overlayWall),
+    // covering the whole page from left end to right end, so no feed,
+    // stories, rails or ads are visible at all. As a second layer, the
+    // news feed is also suppressed by CSS (feed container and every feed
+    // unit hidden, including units Facebook lazy-loads later), and the
+    // page behind the overlay cannot scroll.
+    overlayWall: true,
     css: `
       div[role="feed"],
       div[role="main"] div[data-pagelet="Feed"],
       div[data-pagelet="MainFeed"],
       div[data-pagelet^="FeedUnit"] {
         display: none !important;
+      }
+
+      body {
+        overflow: hidden !important;
       }
     `,
     placeholderBlocks: [

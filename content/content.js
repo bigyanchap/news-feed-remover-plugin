@@ -124,6 +124,31 @@
         }
       }
 
+      #${PLACEHOLDER_WRAP_ID}.nfr-wall-overlay {
+        position: fixed !important;
+        top: 56px !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        overflow-y: auto !important;
+        z-index: 2147483000 !important;
+        background: #f0f2f5 !important;
+        padding: 20px 16px 48px !important;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        #${PLACEHOLDER_WRAP_ID}.nfr-wall-overlay {
+          background: #18191a !important;
+        }
+      }
+
+      #${PLACEHOLDER_WRAP_ID}.nfr-wall-overlay .nfr-block {
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+
       .nfr-block .nfr-kicker {
         font-size: 12px;
         letter-spacing: 0.08em;
@@ -185,8 +210,11 @@
   }
 
   function ensurePlaceholder() {
-    if (!site.placeholderParent) return;
-    const parent = site.placeholderParent();
+    // Overlay mode (Facebook): the wall covers the whole page under the
+    // header, so it hangs on <body> and needs no site-specific parent.
+    const overlay = Boolean(site.overlayWall);
+    if (!overlay && !site.placeholderParent) return;
+    const parent = overlay ? document.body || html : site.placeholderParent();
     if (!parent) return;
 
     let wrap = document.getElementById(PLACEHOLDER_WRAP_ID);
@@ -196,11 +224,14 @@
       wrap.setAttribute("data-nfr", "placeholder-wrap");
 
       if (Array.isArray(site.placeholderBlocks) && site.placeholderBlocks.length) {
-        // Wall mode (Facebook): a stack of big reminder blocks at the top
-        // of the centre column instead of one small placeholder card. The
-        // feed below the wall is suppressed entirely by CSS (see sites.js),
-        // so scrolling past the blocks meets no feed at all.
+        // Wall mode (Facebook): a stack of big reminder blocks instead of
+        // one small placeholder card. With overlayWall they cover the
+        // whole page from left end to right end; the feed behind them is
+        // also suppressed entirely by CSS (see sites.js).
         wrap.classList.add("nfr-wall");
+        if (overlay) {
+          wrap.classList.add("nfr-wall-overlay");
+        }
         for (const block of site.placeholderBlocks) {
           const node = document.createElement("div");
           node.className = "nfr-block";
@@ -223,6 +254,13 @@
         `;
         wrap.appendChild(node);
       }
+    }
+
+    if (overlay) {
+      if (wrap.parentElement !== parent) {
+        parent.appendChild(wrap);
+      }
+      return;
     }
 
     let placed = false;
