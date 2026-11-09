@@ -105,8 +105,8 @@
       check("twitter home tweets hidden", isHidden("tweet-cell"));
       check("youtube watch sidebar still visible", !isHidden("related"));
       check("youtube css has no sidebar removal", !/#related|watch-next-secondary/.test(NFR_SITES.youtube.css));
-      check("facebook feed still visible (goal blocks instead)", !isHidden("fb-feed"));
-      check("facebook hides nothing in css", NFR_SITES.facebook.css.trim() === "");
+      check("facebook feed suppressed below the goal blocks", isHidden("fb-feed"));
+      check("facebook css hides feed units", NFR_SITES.facebook.css.includes("FeedUnit"));
       check("facebook has 7 goal blocks", (NFR_SITES.facebook.placeholderBlocks || []).length === 7);
       check("facebook messenger still visible", !isHidden("fb-chat"));
       check("instagram posts hidden", isHidden("ig-post"));

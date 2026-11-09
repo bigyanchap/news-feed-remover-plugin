@@ -196,9 +196,10 @@
       wrap.setAttribute("data-nfr", "placeholder-wrap");
 
       if (Array.isArray(site.placeholderBlocks) && site.placeholderBlocks.length) {
-        // Wall mode (Facebook): a stack of big reminder blocks in front of
-        // the feed instead of one small placeholder card. The feed itself
-        // stays in the page, below the wall.
+        // Wall mode (Facebook): a stack of big reminder blocks at the top
+        // of the centre column instead of one small placeholder card. The
+        // feed below the wall is suppressed entirely by CSS (see sites.js),
+        // so scrolling past the blocks meets no feed at all.
         wrap.classList.add("nfr-wall");
         for (const block of site.placeholderBlocks) {
           const node = document.createElement("div");

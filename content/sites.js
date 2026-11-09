@@ -93,11 +93,20 @@ const NFR_SITES = {
 
   facebook: {
     hostIncludes: ["facebook.com"],
-    // The news feed is NOT removed on Facebook anymore. Instead, content.js
-    // puts the seven goal-reminder blocks below in front of the feed (each
-    // at least 300px tall, styled in content.js), so the feed only appears
-    // after scrolling consciously past every one of them.
-    css: ``,
+    // Facebook shows the seven goal-reminder blocks below (rendered by
+    // content.js at the top of the centre column, each at least 300px
+    // tall), and the news feed underneath them is suppressed entirely:
+    // the feed container and every feed unit are hidden, including units
+    // Facebook lazy-loads later, so scrolling past the blocks meets no
+    // feed at all.
+    css: `
+      div[role="feed"],
+      div[role="main"] div[data-pagelet="Feed"],
+      div[data-pagelet="MainFeed"],
+      div[data-pagelet^="FeedUnit"] {
+        display: none !important;
+      }
+    `,
     placeholderBlocks: [
       {
         kicker: "Reminder 1 of 7 — Stop",
@@ -131,8 +140,8 @@ const NFR_SITES = {
       },
       {
         kicker: "Reminder 7 of 7 — Your choice",
-        title: "The feed begins below this block",
-        body: "You have read all seven reminders. If you still scroll, scroll consciously — you decided, the feed did not.",
+        title: "There is no feed below this block",
+        body: "The news feed is suppressed entirely. Do your one thing — a message, a group, a profile — or close the tab and come back to your day.",
       },
     ],
     isTargetPage() {
@@ -177,7 +186,7 @@ const NFR_SITES = {
       );
     },
     title: "Remember why you are here",
-    body: "Seven reminders stand between you and the feed.",
+    body: "Seven reminders stand here. The feed below them is suppressed.",
   },
 
   instagram: {
