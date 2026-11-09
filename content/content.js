@@ -93,6 +93,7 @@
 
       #${PLACEHOLDER_WRAP_ID}.nfr-wall {
         padding: 16px 12px 4px !important;
+        position: relative !important;
       }
 
       .nfr-block {
@@ -215,7 +216,13 @@
       }
     }
 
-    if (wrap.parentElement !== parent) {
+    const anchor =
+      typeof site.placeholderAnchor === "function" ? site.placeholderAnchor() : null;
+    if (anchor && anchor.parentElement) {
+      if (wrap.parentElement !== anchor.parentElement || wrap.nextSibling !== anchor) {
+        anchor.parentElement.insertBefore(wrap, anchor);
+      }
+    } else if (wrap.parentElement !== parent) {
       parent.prepend(wrap);
     }
   }
@@ -322,6 +329,15 @@
   }
 
   setInterval(onUrlMaybeChanged, 800);
+
+  // Self-heal: single-page apps (Facebook above all) re-render constantly
+  // and can wipe injected nodes. While hiding is on, re-check once a
+  // second and put the placeholder/wall back if it went missing.
+  setInterval(() => {
+    if (html.classList.contains("nfr-active")) {
+      ensurePlaceholder();
+    }
+  }, 1000);
 
   if (siteId === "youtube") {
     setInterval(trySkipYouTubeAd, 500);

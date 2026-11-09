@@ -150,6 +150,16 @@ const NFR_SITES = {
         document.querySelector("div[role='banner']")?.parentElement
       );
     },
+    // When Facebook has rendered the feed itself, the wall is inserted
+    // directly in front of that element (see content.js), so the blocks
+    // sit exactly where the feed begins instead of at the top of <main>.
+    placeholderAnchor() {
+      return (
+        document.querySelector("div[role='feed']") ||
+        document.querySelector("[data-pagelet='Feed']") ||
+        document.querySelector("[data-pagelet='MainFeed']")
+      );
+    },
     title: "Remember why you are here",
     body: "Seven reminders stand between you and the feed.",
   },
