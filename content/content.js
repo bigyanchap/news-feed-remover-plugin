@@ -132,7 +132,7 @@
         bottom: 0 !important;
         width: 100% !important;
         overflow-y: auto !important;
-        z-index: 2147483000 !important;
+        z-index: 100 !important;
         background: #f0f2f5 !important;
         padding: 20px 16px 48px !important;
       }
@@ -391,6 +391,7 @@
       onUrlMaybeChanged();
       if (html.classList.contains("nfr-active")) {
         ensurePlaceholder();
+        updateOverlayVisibility();
       }
     });
   });
@@ -407,12 +408,34 @@
 
   setInterval(onUrlMaybeChanged, 800);
 
+  // The header's own dropdown panels (Messenger, notifications, profile)
+  // open downward from the top-right buttons, over the wall's area. While
+  // such a panel is open, hide the wall so the panel is fully usable; the
+  // wall returns the moment the panel closes. A panel counts as open when
+  // a dialog/menu element is rendered wide and tall near the top of the
+  // page — hidden template nodes in the DOM have no size.
+  function updateOverlayVisibility() {
+    if (!site.overlayWall) return;
+    const wrap = document.getElementById(PLACEHOLDER_WRAP_ID);
+    if (!wrap) return;
+    let panelOpen = false;
+    for (const el of document.querySelectorAll("[role='dialog'], [role='menu']")) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 200 && rect.height > 100 && rect.top < 120) {
+        panelOpen = true;
+        break;
+      }
+    }
+    wrap.style.setProperty("visibility", panelOpen ? "hidden" : "visible", "important");
+  }
+
   // Self-heal: single-page apps (Facebook above all) re-render constantly
   // and can wipe injected nodes. While hiding is on, re-check once a
   // second and put the placeholder/wall back if it went missing.
   setInterval(() => {
     if (html.classList.contains("nfr-active")) {
       ensurePlaceholder();
+      updateOverlayVisibility();
     }
   }, 1000);
 
